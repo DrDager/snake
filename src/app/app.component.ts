@@ -50,7 +50,7 @@ export class AppComponent implements AfterViewInit {
     return this.gameCanvas.getContext('2d');
   }
 
-  @HostListener('body:keypress', ['$event'])
+  @HostListener('body:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
     this.changeDirection(event.key as CONTROL_TYPE);
   }
@@ -264,29 +264,29 @@ export class AppComponent implements AfterViewInit {
   }
 
   public changeDirection(key: CONTROL_TYPE) {
-    if (!this.firstKeyPressed &&  Object.values(key).includes(key)) {
+    if (!this.firstKeyPressed &&  Object.values(CONTROL_TYPE).includes(key)) {
       timer(1000).subscribe(() => { this.isGameStarted = true; });
       this.firstKeyPressed = true;
       this.spawnApple();
     }
 
-    if( this.isKeyCooldown ) {
+    if ( this.isKeyCooldown ) {
       return false;
     }
 
-    if ( key === CONTROL_TYPE.LEFT && !(this.xv > 0) ){
+    if ((key === CONTROL_TYPE.LEFT || key === CONTROL_TYPE.LEFT_ARROW) && !(this.xv > 0) ) {
       this.xv = - this.speed; this.yv = 0;
     }
 
-    if ( key === CONTROL_TYPE.UP && !(this.yv > 0) ){
+    if ((key === CONTROL_TYPE.UP || key === CONTROL_TYPE.UP_ARROW) && !(this.yv > 0) ) {
       this.xv = 0; this.yv = -this.speed;
     }
 
-    if (key === CONTROL_TYPE.RIGHT && !(this.xv < 0) ){
+    if ((key === CONTROL_TYPE.RIGHT || key === CONTROL_TYPE.RIGHT_ARROW) && !(this.xv < 0) ) {
       this.xv = this.speed; this.yv = 0;
     }
 
-    if ( key === CONTROL_TYPE.DOWN && !(this.yv < 0) ){
+    if ((key === CONTROL_TYPE.DOWN || key === CONTROL_TYPE.DOWN_ARROW) && !(this.yv < 0) ) {
       this.xv = 0; this.yv = this.speed;
     }
 
