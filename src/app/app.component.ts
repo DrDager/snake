@@ -1,6 +1,6 @@
 import { Component, ElementRef, ViewChild, AfterViewInit, HostListener } from '@angular/core';
 import { CONTROL_TYPE } from './models/contols.enum';
-import { timer } from 'rxjs';
+import { timer, interval } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -52,7 +52,7 @@ export class AppComponent implements AfterViewInit {
 
   @HostListener('body:keypress', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
-    console.log(event.key);
+    this.changeDirection(event.key as CONTROL_TYPE);
   }
 
   constructor() {}
@@ -79,7 +79,7 @@ export class AppComponent implements AfterViewInit {
   }
 
   public startGame() {
-    this.gameLoop = setInterval(this.loop.bind(this), 1000 / 60); // 60 FPS
+    this.gameLoop = interval(1000 / 60).subscribe(this.loop.bind(this)); // 60 FPS
   }
 
   public loop(): void {
