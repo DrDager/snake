@@ -89,7 +89,7 @@ export class AppComponent implements AfterViewInit {
 
     // logic
     this.canvasContext.fillStyle = 'black';
-    this.canvasContext.fillRect(0, 0,this.gameCanvas.width, this.gameCanvas.height);
+    this.canvasContext.fillRect(0, 0, this.gameCanvas.width, this.gameCanvas.height);
 
     // force speed
     this.px += this.xv;
@@ -191,7 +191,6 @@ export class AppComponent implements AfterViewInit {
   }
 
   public drawAppleList(): void {
-    // console.log(this.appleList);
     for (let a = 0; a < this.appleList.length; a++) {
       this.canvasContext.fillStyle = this.appleList[a].color;
       this.canvasContext.fillRect(
@@ -218,18 +217,17 @@ export class AppComponent implements AfterViewInit {
 
   public spawnApple(): void {
     const newApple = {
-      x: ~~(Math.random() * this.canvasContext.width),
-      y: ~~(Math.random() * this.canvasContext.height),
+      x: ~~(Math.random() * this.gameCanvas.width),
+      y: ~~(Math.random() * this.gameCanvas.height),
       color: this.generateRandomColor(),
     };
-    console.log(newApple);
 
     // forbid to spawn near the edges
     if (
       newApple.x < this.aWidth ||
-      newApple.x > this.canvasContext.width - this.aWidth ||
+      newApple.x > this.gameCanvas.width - this.aWidth ||
       newApple.y < this.aHeight ||
-      newApple.y > this.canvasContext.height - this.aHeight
+      newApple.y > this.gameCanvas.height - this.aHeight
     ) {
       this.spawnApple();
       return;
@@ -266,8 +264,7 @@ export class AppComponent implements AfterViewInit {
   }
 
   public changeDirection(key: CONTROL_TYPE) {
-
-    if (!this.firstKeyPressed &&  key in CONTROL_TYPE) {
+    if (!this.firstKeyPressed &&  Object.values(key).includes(key)) {
       timer(1000).subscribe(() => { this.isGameStarted = true; });
       this.firstKeyPressed = true;
       this.spawnApple();
