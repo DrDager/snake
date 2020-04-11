@@ -6,8 +6,7 @@ import { Component, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements AfterViewInit {
-
-  @ViewChild('snakeCanvas', {static: false})
+  @ViewChild('snakeCanvas', { static: false })
   set snakeCanvasRef(ref: ElementRef) {
     this.gameCanvas = ref.nativeElement;
   }
@@ -45,10 +44,11 @@ export class AppComponent implements AfterViewInit {
 
   public score: number; // current game score
 
-  public get canvasContext(): any { return this.gameCanvas.getContext('2d'); }
-
-  constructor() {
+  public get canvasContext(): any {
+    return this.gameCanvas.getContext('2d');
   }
+
+  constructor() {}
 
   ngAfterViewInit() {
     this.setDefaultOptions();
@@ -61,8 +61,8 @@ export class AppComponent implements AfterViewInit {
     this.xv = this.yv = 0;
     this.pWidth = this.pHeight = 20;
     this.aWidth = this.aHeight = 20;
-    this.px = ~~(this.gameCanvas.width) / 2;
-    this.py = ~~(this.gameCanvas.height) / 2;
+    this.px = ~~this.gameCanvas.width / 2;
+    this.py = ~~this.gameCanvas.height / 2;
     this.appleList = [];
     this.trailList = [];
     this.tailSize = 100;
@@ -82,7 +82,7 @@ export class AppComponent implements AfterViewInit {
 
     // logic
     this.canvasContext.fillStyle = 'black';
-    this.canvasContext.fillRect(0, 0, this.gameCanvas.width, this.gameCanvas.height);
+    this.canvasContext.fillRect(0, 0,this.gameCanvas.width, this.gameCanvas.height);
 
     // force speed
     this.px += this.xv;
@@ -95,7 +95,11 @@ export class AppComponent implements AfterViewInit {
     this.drawSnake();
 
     // add nwe elements to trail
-    this.trailList.push({ x: this.px, y: this.py, color: this.canvasContext.fillStyle });
+    this.trailList.push({
+      x: this.px,
+      y: this.py,
+      color: this.canvasContext.fillStyle,
+    });
 
     // limiter
     if (this.trailList.length > this.tailSize) {
@@ -182,7 +186,12 @@ export class AppComponent implements AfterViewInit {
   public drawAppleList(): void {
     for (let a = 0; a < this.appleList.length; a++) {
       this.canvasContext.fillStyle = this.appleList[a].color;
-      this.canvasContext.fillRect(this.appleList[a].x, this.appleList[a].y, this.aWidth, this.aHeight);
+      this.canvasContext.fillRect(
+        this.appleList[a].x,
+        this.appleList[a].y,
+        this.aWidth,
+        this.aHeight
+      );
     }
   }
 
@@ -190,7 +199,52 @@ export class AppComponent implements AfterViewInit {
     this.canvasContext.fillStyle = 'lime';
     for (let i = 0; i < this.trailList.length; i++) {
       this.canvasContext.fillStyle = this.trailList[i].color || 'lime';
-      this.canvasContext.fillRect(this.trailList[i].x, this.trailList[i].y, this.pWidth, this.pHeight);
+      this.canvasContext.fillRect(
+        this.trailList[i].x,
+        this.trailList[i].y,
+        this.pWidth,
+        this.pHeight
+      );
+    }
+  }
+
+  public spawnApple(): void {
+    const newApple = {
+      x: ~~(Math.random() * this.canvasContext.width),
+      y: ~~(Math.random() * this.canvasContext.height),
+      color: 'red',
+    };
+
+    // forbid to spawn near the edges
+    if (
+      newApple.x < this.aWidth ||
+      newApple.x > this.canvasContext.width - this.aWidth ||
+      newApple.y < this.aHeight ||
+      newApple.y > this.canvasContext.height - this.aHeight
+    ) {
+      this.spawnApple();
+      return;
+    }
+
+    // check for collisions with tail element, so no apple will be spawned in it
+    for (let i = 0; i < this.trailList.length; i++) {
+      if (
+        newApple.x < this.trailList[i].x + this.pWidth &&
+        newApple.x + this.aWidth > this.trailList[i].x &&
+        newApple.y < this.trailList[i].y + this.pHeight &&
+        newApple.y + this.aHeight > this.trailList[i].y
+      ) {
+        // got collision
+        this.spawnApple();
+        return;
+      }
+    }
+
+    this.appleList.push(newApple);
+
+    if (this.appleList.length < 3 && ~~(Math.random() * 1000) > 700) {
+      // 30% chance to spawn one more apple
+      this.spawnApple();
     }
   }
 }
