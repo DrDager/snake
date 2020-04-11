@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild, AfterViewInit, Renderer2 } from '@angular/core';
+import { Component, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
 
 @Component({
   selector: 'app-root',
@@ -47,12 +47,10 @@ export class AppComponent implements AfterViewInit {
 
   public get canvasContext(): any { return this.gameCanvas.getContext('2d'); }
 
-  constructor(private renderer: Renderer2) {
+  constructor() {
   }
 
   ngAfterViewInit() {
-    console.log(this.gameCanvas, this.canvasContext);
-
     this.setDefaultOptions();
     this.startGame();
   }
