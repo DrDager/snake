@@ -166,7 +166,7 @@ export class AppComponent implements AfterViewInit {
         this.appleList.splice(a, 1); // remove this apple from the appleList list
         this.tailSize += 10; // add tailSize length
         this.speed += 0.1; // add some speed
-        // spawnApple(); // spawn another apple(-s)
+        this.spawnApple(); // spawn another apple(-s)
         break;
       }
     }
@@ -191,6 +191,7 @@ export class AppComponent implements AfterViewInit {
   }
 
   public drawAppleList(): void {
+    // console.log(this.appleList);
     for (let a = 0; a < this.appleList.length; a++) {
       this.canvasContext.fillStyle = this.appleList[a].color;
       this.canvasContext.fillRect(
@@ -219,8 +220,9 @@ export class AppComponent implements AfterViewInit {
     const newApple = {
       x: ~~(Math.random() * this.canvasContext.width),
       y: ~~(Math.random() * this.canvasContext.height),
-      color: 'red',
+      color: this.generateRandomColor(),
     };
+    console.log(newApple);
 
     // forbid to spawn near the edges
     if (
