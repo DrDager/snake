@@ -1,4 +1,6 @@
-import { Component, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, ElementRef, ViewChild, AfterViewInit, HostListener } from '@angular/core';
+import { CONTROL_TYPE } from './models/contols.enum';
+import { timer } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -46,6 +48,11 @@ export class AppComponent implements AfterViewInit {
 
   public get canvasContext(): any {
     return this.gameCanvas.getContext('2d');
+  }
+
+  @HostListener('body:keypress', ['$event'])
+  handleKeyboardEvent(event: KeyboardEvent) {
+    console.log(event.key);
   }
 
   constructor() {}
@@ -246,5 +253,46 @@ export class AppComponent implements AfterViewInit {
       // 30% chance to spawn one more apple
       this.spawnApple();
     }
+  }
+
+  public generateRandomColor() {
+    return '#' + (
+         (~~(Math.random() * 255)).toString(16))
+      + ((~~(Math.random() * 255)).toString(16))
+      + ((~~(Math.random() * 255)).toString(16)
+    );
+  }
+
+  public changeDirection(key: CONTROL_TYPE) {
+
+    if (!this.firstKeyPressed &&  key in CONTROL_TYPE) {
+      timer(1000).subscribe(() => { this.isGameStarted = true; });
+      this.firstKeyPressed = true;
+      this.spawnApple();
+    }
+
+    if( this.isKeyCooldown ) {
+      return false;
+    }
+
+    if ( key === CONTROL_TYPE.LEFT && !(this.xv > 0) ){
+      this.xv = - this.speed; this.yv = 0;
+    }
+
+    if ( key === CONTROL_TYPE.UP && !(this.yv > 0) ){
+      this.xv = 0; this.yv = -this.speed;
+    }
+
+    if (key === CONTROL_TYPE.RIGHT && !(this.xv < 0) ){
+      this.xv = this.speed; this.yv = 0;
+    }
+
+    if ( key === CONTROL_TYPE.DOWN && !(this.yv < 0) ){
+      this.xv = 0; this.yv = this.speed;
+    }
+
+    this.isKeyCooldown = true;
+
+    timer(100).subscribe(() => { this.isKeyCooldown = false; });
   }
 }
