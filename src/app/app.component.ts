@@ -66,13 +66,13 @@ export class AppComponent implements AfterViewInit {
     this.isGameStarted = this.firstKeyPressed = false;
     this.speed = this.baseSpeed = 3;
     this.xv = this.yv = 0;
-    this.pWidth = this.pHeight = 20;
-    this.aWidth = this.aHeight = 20;
+    this.pWidth = this.pHeight = 25;
+    this.aWidth = this.aHeight = 25;
     this.px = ~~this.gameCanvas.width / 2;
     this.py = ~~this.gameCanvas.height / 2;
     this.appleList = [];
     this.trailList = [];
-    this.tailSize = 100;
+    this.tailSize = 30;
     this.tailSafeZone = 20;
     this.isKeyCooldown = false;
     this.score = 0;
@@ -87,7 +87,7 @@ export class AppComponent implements AfterViewInit {
       throw new Error('Game canvas in undefined');
     }
 
-    // logic
+    // reset canvas
     this.canvasContext.fillStyle = 'black';
     this.canvasContext.fillRect(0, 0, this.gameCanvas.width, this.gameCanvas.height);
 
@@ -138,6 +138,7 @@ export class AppComponent implements AfterViewInit {
           this.py + this.pHeight > this.trailList[i].y
         ) {
           // got collision
+          this.score = 0; // reset score
           this.tailSize = 10; // cut the tailSize
           this.speed = this.baseSpeed; // cut the speed (flash nomore lol xD)
 
@@ -163,6 +164,8 @@ export class AppComponent implements AfterViewInit {
         this.py + this.pHeight > this.appleList[a].y
       ) {
         // got collision with apple
+        // increase score
+        this.score++;
         this.appleList.splice(a, 1); // remove this apple from the appleList list
         this.tailSize += 10; // add tailSize length
         this.speed += 0.1; // add some speed
