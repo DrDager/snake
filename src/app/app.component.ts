@@ -1,6 +1,7 @@
 import { Component, ElementRef, ViewChild, AfterViewInit, HostListener } from '@angular/core';
 import { CONTROL_TYPE } from './models/contols.enum';
-import { timer, interval } from 'rxjs';
+import { timer, interval, BehaviorSubject } from 'rxjs';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -46,13 +47,15 @@ export class AppComponent implements AfterViewInit {
 
   public score: number; // current game score
 
+  readonly isPause$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+
   public get canvasContext(): any {
     return this.gameCanvas.getContext('2d');
   }
 
   @HostListener('body:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
-    this.changeDirection(event.key as CONTROL_TYPE);
+    this.handleKeyPress(event.key as CONTROL_TYPE);
   }
 
   constructor() {}
@@ -79,7 +82,9 @@ export class AppComponent implements AfterViewInit {
   }
 
   public startGame() {
-    this.gameLoop = interval(1000 / 60).subscribe(this.loop.bind(this)); // 60 FPS
+    this.gameLoop = interval(1000 / 60)
+      .pipe(filter(() => !this.isPause))
+      .subscribe(this.loop.bind(this)); // 60 FPS
   }
 
   public loop(): void {
@@ -266,7 +271,12 @@ export class AppComponent implements AfterViewInit {
     );
   }
 
-  public changeDirection(key: CONTROL_TYPE) {
+  public handleKeyPress(key: CONTROL_TYPE) {
+    if (key === CONTROL_TYPE.PAUSE) {
+      this.isPause$.next(!this.isPause);
+      return false;
+    }
+
     if (!this.firstKeyPressed &&  Object.values(CONTROL_TYPE).includes(key)) {
       timer(1000).subscribe(() => { this.isGameStarted = true; });
       this.firstKeyPressed = true;
@@ -296,5 +306,9 @@ export class AppComponent implements AfterViewInit {
     this.isKeyCooldown = true;
 
     timer(100).subscribe(() => { this.isKeyCooldown = false; });
+  }
+
+  public get isPause() {
+    return this.isPause$.getValue();
   }
 }

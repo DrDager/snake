@@ -7,4 +7,5 @@ export enum CONTROL_TYPE {
     DOWN_ARROW = 'ArrowDown',
     LEFT_ARROW = 'ArrowLeft',
     RIGHT_ARROW = 'ArrowRight',
+    PAUSE = ' '
 }

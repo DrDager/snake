@@ -1,5 +1,5 @@
 <app-actions></app-actions>
-<app-snake>
-    <canvas id="mc" width="1280" height="720" #snakeCanvas></canvas>
+<app-snake [isPause]="isPause$ | async">
+  <canvas id="mc" width="1280" height="720" #snakeCanvas></canvas>
 </app-snake>
 <app-score [score]="score || 0"></app-score>
